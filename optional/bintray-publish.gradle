@@ -7,6 +7,7 @@ publishing {
             groupId GROUP
             version VERSION_NAME
             artifactId ARTIFACT_ID
+            artifact '/build/libs/optional.jar'
             pom.withXml {
                 Node root = asNode()
                 root.appendNode('name', ARTIFACT_ID)
