@@ -48,7 +48,7 @@ bintray {
     publications = ['mavenJava']
 
     dryRun = false
-    publish = false
+    publish = true
     pkg {
         repo = 'maven'
         name = ARTIFACT_ID
