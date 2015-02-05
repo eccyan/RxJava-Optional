@@ -41,6 +41,21 @@
         </license>
     </licenses>
 
+
+    <developers>
+        <developer>
+            <id>eccyan</id>
+            <name>Daisuke Sato</name>
+            <email>g00.eccyan@gmail.com</email>
+            <organization>eccyan</organization>
+            <organizationUrl>http://twitter.com/eccyan</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+9</timezone>
+        </developer>
+    </developers>
+
     <organization>
         <name>eccyan</name>
         <url>https://twitter.com/eccyan</url>
