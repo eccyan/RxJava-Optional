@@ -3,6 +3,21 @@ RxJava-Optional
 
 RxJava-Optional is an library that allows developers to use Optional using RxJava
 
+# Install
+
+Download [the latest JAR](https://search.maven.org/remote_content?g=jp.wasabeef&a=recyclerview-animators&v=LATEST) or grab via Gradle:
+
+#### Gradle
+```groovy
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.eccyan:rxjava-optional:1.0.2'
+}
+```
+
 Developed By
 -------
 Daisuke Sato(eccyan) - <g00.eccyan@gmail.com>
