@@ -13,6 +13,11 @@ def bintrayApiKey() {
     return localProperty("bintrayApiKey") ?: bintrayApiKey ?: "";
 }
 
+def gpgPassphrase() {
+    return localProperty("gpgPassphrase") ?: gpgPassphrase ?: "";
+}
+
+
 buildscript {
     repositories {
         jcenter()
@@ -97,6 +102,10 @@ subprojects {
         version {
             name = pkgVersion
             vcsTag = pkgVersion
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = gpgPassphrase()
+            }
         }
     }
 }
