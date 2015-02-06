@@ -53,7 +53,7 @@ subprojects {
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
-        from javadoc.destinationDir
+        from sourceSets.main.allJava
     }
 
     // add javadoc/source jar tasks as artifacts
