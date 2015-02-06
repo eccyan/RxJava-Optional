@@ -1,10 +1,17 @@
 configurations {
-    spi
+    provided
+}
+
+sourceSets {
+    main { compileClasspath += configurations.provided }
 }
 
 dependencies {
-    compile "io.reactivex:rxjava:1.0.5"
+    provided "io.reactivex:rxjava:1.0.5"
 }
 
-// Just a smoke test that using this option does not lead to any exception
-compileJava.options.compilerArgs = ['-Xlint:unchecked']
+tasks.withType(Javadoc) {
+    dependencies {
+        compile "io.reactivex:rxjava:1.0.5"
+    }
+}
