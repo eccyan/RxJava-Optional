@@ -1,6 +1,8 @@
 RxJava-Optional
 ======================
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxJava--Optional-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1487)
+
 RxJava-Optional is an library that allows developers to use Optional using RxJava
 
 # Install
