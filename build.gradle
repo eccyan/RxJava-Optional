@@ -1,4 +1,18 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+def localProperty(name) {
+    Properties props = new Properties()
+    props.load(project.rootProject.file('local.properties')
+            .newDataInputStream())
+    return props.getProperty(name.toString())
+}
+
+def bintrayUser() {
+    return localProperty("bintrayUser") ?: bintrayUser ?: "";
+}
+
+def bintrayApiKey() {
+    return localProperty("bintrayApiKey") ?: bintrayApiKey ?: "";
+}
+
 buildscript {
     repositories {
         jcenter()
@@ -9,15 +23,23 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        jcenter()
-    }
+    apply plugin: 'idea'
+
+    group = 'org.jfrog.example.bintray.gradle'
+    version = '1.2-gradle-publish'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    dependencies {
+        testCompile 'junit:junit:4.7'
+    }
 
     // custom tasks for creating source/javadoc jars
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -34,4 +56,48 @@ subprojects {
     artifacts {
         archives sourcesJar, javadocJar
     }
+
+    repositories {
+        jcenter()
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                if (plugins.hasPlugin('war')) {
+                    from components.web
+                } else {
+                    from components.java
+                }
+
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+    }
+
+    bintray {
+        user = bintrayUser()
+        key = bintrayApiKey()
+
+        publications = ['mavenJava'] //When uploading Maven-based publication files
+        dryRun = false //Whether to run this as dry-run, without deploying
+        publish = false //If version should be auto published after an upload
+        pkg {
+            repo = 'maven'
+            name = pkgName
+            desc = 'RxJava-Optional is an library that allows developers to use Optional using RxJava'
+            websiteUrl = siteUrl
+            issueTrackerUrl = 'https://github.com/eccyan/RxJava-Optional/issues'
+            vcsUrl = 'https://github.com/eccyan/RxJava-Optional.git'
+            licenses = ['Apache-2.0']
+            labels = ['optional', 'backport']
+            publicDownloadNumbers = true
+        }
+        version {
+            name = pkgVersion
+            vcsTag = pkgVersion
+        }
+    }
 }
+

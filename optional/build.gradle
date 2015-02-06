@@ -1,8 +1,10 @@
-apply plugin: 'java'
+configurations {
+    spi
+}
 
 dependencies {
     compile "io.reactivex:rxjava:1.0.5"
 }
 
-apply from: 'central-publish.gradle'
-apply from: 'bintray-publish.gradle'
+// Just a smoke test that using this option does not lead to any exception
+compileJava.options.compilerArgs = ['-Xlint:unchecked']
