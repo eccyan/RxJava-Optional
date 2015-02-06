@@ -1,23 +1,49 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+def localProperty(name) {
+    Properties props = new Properties()
+    props.load(project.rootProject.file('local.properties')
+            .newDataInputStream())
+    return props.getProperty(name.toString())
+}
+
+def bintrayUser() {
+    return localProperty("bintrayUser") ?: bintrayUser ?: "";
+}
+
+def bintrayApiKey() {
+    return localProperty("bintrayApiKey") ?: bintrayApiKey ?: "";
+}
+
+def gpgPassphrase() {
+    return localProperty("gpgPassphrase") ?: gpgPassphrase ?: "";
+}
+
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
     }
 }
 
 allprojects {
-    repositories {
-        jcenter()
-    }
+    apply plugin: 'idea'
+
+    group = pkgGroup
+    version = pkgVersion
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
+
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+    dependencies {
+        testCompile 'junit:junit:4.7'
+    }
 
     // custom tasks for creating source/javadoc jars
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -34,4 +60,83 @@ subprojects {
     artifacts {
         archives sourcesJar, javadocJar
     }
+
+    repositories {
+        jcenter()
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId pkgGroup
+                version pkgVersion
+                artifactId pkgArtifactId
+                artifact sourcesJar
+                artifact javadocJar
+                pom.withXml {
+                    final Node root = asNode()
+                    root.appendNode('name', pkgName)
+                    root.appendNode('description', pkgDesc)
+                    root.appendNode('url', pkgSiteUrl)
+
+                    final developer = root.appendNode('developers').appendNode('developer')
+                    developer.appendNode('id', 'eccyan')
+                    developer.appendNode('name', 'Daisuke Sato')
+                    developer.appendNode('email', 'g00.eccyan@gmail.com')
+                    developer.appendNode('url', 'https://twitter.com/eccyan')
+                    developer.appendNode('timezone', '+9')
+
+                    final issues = root.appendNode('issueManagement')
+                    issues.appendNode('system', 'Github Issues')
+                    issues.appendNode('url', "${pkgSiteUrl}/issues")
+
+                    final scm = root.appendNode('scm')
+                    scm.appendNode('url', pkgSiteUrl)
+                    scm.appendNode('connection', "scm:git:git://github.com/eccyan/${pkgName}.git")
+                    scm.appendNode('developerConnection', "scm:git:ssh://github.com/eccyan/${pkgName}.git")
+
+                    def license = root.appendNode('licenses').appendNode('license')
+                    license.appendNode('name', 'Apache 2.0')
+                    license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                }
+
+
+                if (plugins.hasPlugin('war')) {
+                    from components.web
+                } else {
+                    from components.java
+                }
+            }
+        }
+    }
+
+    bintray {
+        user = bintrayUser()
+        key = bintrayApiKey()
+
+        publications = ['mavenJava'] //When uploading Maven-based publication files
+        dryRun = false //Whether to run this as dry-run, without deploying
+        publish = false //If version should be auto published after an upload
+        pkg {
+            repo = 'maven'
+            name = pkgName
+            desc = pkgDesc
+            websiteUrl = pkgSiteUrl
+            issueTrackerUrl = "${pkgSiteUrl}/issues"
+            vcsUrl = 'https://github.com/eccyan/RxJava-Optional.git'
+            licenses = ['Apache-2.0']
+            labels = ['optional', 'backport']
+            publicDownloadNumbers = true
+            version {
+                name = pkgVersion
+                vcsTag = pkgVersion
+                gpg {
+                    sign = true //Determines whether to GPG sign the files. The default is false
+                    passphrase = gpgPassphrase()
+                }
+            }
+        }
+    }
 }
+
+
