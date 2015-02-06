@@ -75,7 +75,7 @@ subprojects {
                 artifact javadocJar
                 pom.withXml {
                     final Node root = asNode()
-                    root.appendNode('name', pkgName)
+                    root.appendNode('name', "${pkgGroup}:${pkgArtifactId}")
                     root.appendNode('description', pkgDesc)
                     root.appendNode('url', pkgSiteUrl)
 
