@@ -29,7 +29,7 @@ buildscript {
 allprojects {
     apply plugin: 'idea'
 
-    group = 'com.eccyan'
+    group = pkgGroup
     version = pkgVersion
 }
 
@@ -68,14 +68,37 @@ subprojects {
     publishing {
         publications {
             mavenJava(MavenPublication) {
+                groupId pkgGroup
+                version pkgVersion
+                artifactId pkgArtifactId
+                artifact sourcesJar
+                artifact javadocJar
+                pom.withXml {
+                    final Node root = asNode()
+                    root.appendNode('name', pkgName)
+                    root.appendNode('description', pkgDesc)
+                    root.appendNode('url', pkgSiteUrl)
+
+                    final issues = root.appendNode('issueManagement')
+                    issues.appendNode('system', 'Github Issues')
+                    issues.appendNode('url', "${pkgSiteUrl}/issues")
+
+                    final scm = root.appendNode('scm')
+                    scm.appendNode('url', pkgSiteUrl)
+                    scm.appendNode('connection', "scm:git:git://github.com/eccyan/${pkgName}.git")
+                    scm.appendNode('developerConnection', "scm:git:ssh://github.com/eccyan/${pkgName}.git")
+
+                    def license = root.appendNode('licenses').appendNode('license')
+                    license.appendNode('name', 'Apache 2.0')
+                    license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                }
+
+
                 if (plugins.hasPlugin('war')) {
                     from components.web
                 } else {
                     from components.java
                 }
-
-                artifact sourcesJar
-                artifact javadocJar
             }
         }
     }
@@ -90,9 +113,9 @@ subprojects {
         pkg {
             repo = 'maven'
             name = pkgName
-            desc = 'RxJava-Optional is an library that allows developers to use Optional using RxJava'
-            websiteUrl = siteUrl
-            issueTrackerUrl = 'https://github.com/eccyan/RxJava-Optional/issues'
+            desc = pkgDesc
+            websiteUrl = pkgSiteUrl
+            issueTrackerUrl = "${pkgSiteUrl}/issues"
             vcsUrl = 'https://github.com/eccyan/RxJava-Optional.git'
             licenses = ['Apache-2.0']
             labels = ['optional', 'backport']
