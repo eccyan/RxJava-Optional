@@ -14,6 +14,8 @@ repositories {
 }
 
 dependencies {
+    compile 'io.reactivex:rxandroid:0.24.0'
+    //  compile 'io.reactivex:rxjava:1.0.5'
     compile 'com.eccyan:rxjava-optional:1.0.2'
 }
 ```
