@@ -17,21 +17,20 @@ def gpgPassphrase() {
     return localProperty("gpgPassphrase") ?: gpgPassphrase ?: "";
 }
 
-
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
     }
 }
 
 allprojects {
     apply plugin: 'idea'
 
-    group = 'org.jfrog.example.bintray.gradle'
-    version = '1.2-gradle-publish'
+    group = 'com.eccyan'
+    version = pkgVersion
 }
 
 subprojects {
@@ -39,8 +38,8 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
 
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
 
     dependencies {
         testCompile 'junit:junit:4.7'
@@ -98,15 +97,16 @@ subprojects {
             licenses = ['Apache-2.0']
             labels = ['optional', 'backport']
             publicDownloadNumbers = true
-        }
-        version {
-            name = pkgVersion
-            vcsTag = pkgVersion
-            gpg {
-                sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = gpgPassphrase()
+            version {
+                name = pkgVersion
+                vcsTag = pkgVersion
+                gpg {
+                    sign = true //Determines whether to GPG sign the files. The default is false
+                    passphrase = gpgPassphrase()
+                }
             }
         }
     }
 }
+
 
