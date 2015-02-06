@@ -79,6 +79,13 @@ subprojects {
                     root.appendNode('description', pkgDesc)
                     root.appendNode('url', pkgSiteUrl)
 
+                    final developer = root.appendNode('developers').appendNode('developer')
+                    developer.appendNode('id', 'eccyan')
+                    developer.appendNode('name', 'Daisuke Sato')
+                    developer.appendNode('email', 'g00.eccyan@gmail.com')
+                    developer.appendNode('url', 'https://twitter.com/eccyan')
+                    developer.appendNode('timezone', '+9')
+
                     final issues = root.appendNode('issueManagement')
                     issues.appendNode('system', 'Github Issues')
                     issues.appendNode('url', "${pkgSiteUrl}/issues")
