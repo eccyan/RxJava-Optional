@@ -7,7 +7,7 @@ RxJava-Optional is an library that allows developers to use Optional using RxJav
 
 # Install
 
-Download [the latest JAR](https://bintray.com/artifact/download/eccyan/maven/com/eccyan/rxjava-optional/1.0.2/rxjava-optional-1.0.2-javadoc.jar) or grab via Gradle:
+Download [the latest JAR](https://oss.sonatype.org/content/groups/staging/com/eccyan/rxjava-optional/1.0.2/rxjava-optional-1.0.2.jar) or grab via Gradle:
 
 #### Gradle
 ```groovy
