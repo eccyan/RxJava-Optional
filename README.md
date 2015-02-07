@@ -1,13 +1,13 @@
 RxJava-Optional
 ======================
 
-[![Android Arsenal](http://search.maven.org/remotecontent?filepath=com/eccyan/rxjava-optional/1.0.2/rxjava-optional-1.0.2.jar)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxJava--Optional-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1487)
 
 RxJava-Optional is an library that allows developers to use Optional using RxJava
 
 # Install
 
-Download [the latest JAR](https://oss.sonatype.org/content/groups/staging/com/eccyan/rxjava-optional/1.0.2/rxjava-optional-1.0.2.jar) or grab via Gradle:
+Download [the latest JAR](http://search.maven.org/remotecontent?filepath=com/eccyan/rxjava-optional/1.0.2/rxjava-optional-1.0.2.jar) or grab via Gradle:
 
 #### Gradle
 ```groovy
