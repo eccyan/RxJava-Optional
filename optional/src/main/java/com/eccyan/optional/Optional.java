@@ -63,7 +63,7 @@ public class Optional<T> extends Observable<T> {
     }
 
     public boolean isPresent() {
-        return isEmpty().toBlocking().single();
+        return !isEmpty().toBlocking().single();
     }
 
     public void ifPresent(Action1<? super T> action) {
