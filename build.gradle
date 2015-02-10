@@ -42,7 +42,7 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_7
 
     dependencies {
-        testCompile 'junit:junit:4.7'
+        testCompile 'junit:junit:4.11'
     }
 
     // custom tasks for creating source/javadoc jars

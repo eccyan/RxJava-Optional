@@ -1,17 +1,27 @@
 package com.eccyan.optional;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.internal.operators.OnSubscribeFromIterable;
 
 /**
  * Created by Daisuke Sato on 2/5/15.
  */
 public class Optional<T> extends Observable<T> {
+
+    public static abstract class Predicate<T> implements Func1<T, Boolean> {
+
+    }
+
+    public static abstract class Function<T, U> implements Func1<T, U> {
+
+    }
 
     public static class OnSubscribeForSingleItem<T> implements OnSubscribe<T> {
 
@@ -33,15 +43,19 @@ public class Optional<T> extends Observable<T> {
             throw new NullPointerException();
         }
 
-        return new Optional<>(new OnSubscribeForSingleItem<>(data));
+        return new Optional<U>(new OnSubscribeForSingleItem<U>(data));
     }
 
     public static <U> Optional<U> ofNullable(U data) {
         if (data == null) {
-            return new Optional<>(new OnSubscribeFromIterable<>(Collections.<U>emptyList()));
+            return optionalEmpty();
         } else {
             return of(data);
         }
+    }
+
+    public static <U> Optional<U> optionalEmpty() {
+        return new Optional<U>(new OnSubscribeFromIterable<U>(Collections.<U>emptyList()));
     }
 
     protected Optional(OnSubscribe<T> f) {
@@ -49,7 +63,7 @@ public class Optional<T> extends Observable<T> {
     }
 
     public boolean isPresent() {
-        return isEmpty().toBlocking().single();
+        return !isEmpty().toBlocking().single();
     }
 
     public void ifPresent(Action1<? super T> action) {
@@ -76,4 +90,36 @@ public class Optional<T> extends Observable<T> {
         return get();
     }
 
+    public Optional<T> filter(final Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
+
+        return Optional.ofNullable(filter(new Func1<T, Boolean>() {
+            @Override
+            public Boolean call(T t) {
+                return predicate.call(t);
+            }
+        }).toBlocking().singleOrDefault(null));
+    }
+
+    public <U> Optional<U> map(final Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper);
+
+        return Optional.ofNullable(map(new Func1<T, U>() {
+            @Override
+            public U call(T t) {
+                return mapper.call(t);
+            }
+        }).toBlocking().singleOrDefault(null));
+    }
+
+    public <U> Optional<U> flatMap(final Function<? super T, Optional<U>> mapper) {
+        Objects.requireNonNull(mapper);
+
+        return Optional.ofNullable(flatMap(new Func1<T, Optional<U>>() {
+            @Override
+            public Optional<U> call(T t) {
+                return Objects.requireNonNull(mapper.call(t));
+            }
+        }).toBlocking().singleOrDefault(null));
+    }
 }
