@@ -1,8 +1,7 @@
 package com.eccyan.optional;
 
 import java.util.Collections;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.Objects;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -15,6 +14,14 @@ import rx.internal.operators.OnSubscribeFromIterable;
  * Created by Daisuke Sato on 2/5/15.
  */
 public class Optional<T> extends Observable<T> {
+
+    public static abstract class Predicate<T> implements Func1<T, Boolean> {
+
+    }
+
+    public static abstract class Function<T, U> implements Func1<T, U> {
+
+    }
 
     public static class OnSubscribeForSingleItem<T> implements OnSubscribe<T> {
 
@@ -47,7 +54,7 @@ public class Optional<T> extends Observable<T> {
         }
     }
 
-    protected static <U> Optional<U> optionalEmpty() {
+    public static <U> Optional<U> optionalEmpty() {
         return new Optional<U>(new OnSubscribeFromIterable<U>(Collections.<U>emptyList()));
     }
 
@@ -83,30 +90,36 @@ public class Optional<T> extends Observable<T> {
         return get();
     }
 
-    public Optional<T> filter(final Predicate<? super T> predicate) {
+    public Optional<T> filter(final Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
+
         return Optional.ofNullable(filter(new Func1<T, Boolean>() {
             @Override
             public Boolean call(T t) {
-                return predicate.test(t);
+                return predicate.call(t);
             }
         }).toBlocking().singleOrDefault(null));
     }
 
-    public <U> Optional<U> map(final Function<? super T,? extends U> mapper) {
+    public <U> Optional<U> map(final Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper);
+
         return Optional.ofNullable(map(new Func1<T, U>() {
             @Override
             public U call(T t) {
-                return mapper.apply(t);
+                return mapper.call(t);
             }
         }).toBlocking().singleOrDefault(null));
     }
 
-    public <U> Optional<U> flatMap(final Function<? super T,Optional<U>> mapper) {
-        return (Optional<U>)flatMap(new Func1<T, Optional<U>>() {
+    public <U> Optional<U> flatMap(final Function<? super T, Optional<U>> mapper) {
+        Objects.requireNonNull(mapper);
+
+        return Optional.ofNullable(flatMap(new Func1<T, Optional<U>>() {
             @Override
             public Optional<U> call(T t) {
-                return mapper.apply(t);
+                return Objects.requireNonNull(mapper.call(t));
             }
-        }).single();
+        }).toBlocking().singleOrDefault(null));
     }
 }
