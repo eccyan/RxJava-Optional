@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.1.0
+-------------
+
+* Design changed to Optional has Observable
+
 Version 1.0.3
 -------------
 
