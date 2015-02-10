@@ -1,15 +1,24 @@
 Change Log
 ==========
 
+Version 1.0.3
+-------------
+
+* Fixed isPresent result has inversed
+* Added filter/map/flatMap
+
 Version 1.0.2
 -------------
 
-Replaced to gradle
+* Replaced to gradle
 
 
 Version 1.0.1
 -------------
 
-Fixed pathes for jcenter
+* Fixed pathes for jcenter
 
-Initial release.
+Version 1.0.0
+-------------
+
+* Initial release.
