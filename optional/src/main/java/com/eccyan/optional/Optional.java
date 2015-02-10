@@ -4,78 +4,55 @@ import java.util.Collections;
 import java.util.Objects;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
-import rx.internal.operators.OnSubscribeFromIterable;
 
 /**
  * Created by Daisuke Sato on 2/5/15.
  */
-public class Optional<T> extends Observable<T> {
+public class Optional<T> {
 
-    public static abstract class Predicate<T> implements Func1<T, Boolean> {
-
-    }
-
-    public static abstract class Function<T, U> implements Func1<T, U> {
-
-    }
-
-    public static class OnSubscribeForSingleItem<T> implements OnSubscribe<T> {
-
-        private final T item;
-
-        public OnSubscribeForSingleItem(final T item) {
-            this.item = item;
-        }
-
-        @Override
-        public void call(Subscriber<? super T> subscriber) {
-            subscriber.onNext(this.item);
-            subscriber.onCompleted();
-        }
-    }
+    private final Observable<T> observable;
 
     public static <U> Optional<U> of(U data) {
         if (data == null) {
             throw new NullPointerException();
         }
 
-        return new Optional<U>(new OnSubscribeForSingleItem<U>(data));
+        return new Optional<U>(Observable.just(data));
     }
 
     public static <U> Optional<U> ofNullable(U data) {
         if (data == null) {
-            return optionalEmpty();
+            return empty();
         } else {
             return of(data);
         }
     }
 
-    public static <U> Optional<U> optionalEmpty() {
-        return new Optional<U>(new OnSubscribeFromIterable<U>(Collections.<U>emptyList()));
+    public static <U> Optional<U> empty() {
+        return new Optional<U>(Observable.from(Collections.<U>emptyList()));
     }
 
-    protected Optional(OnSubscribe<T> f) {
-        super(f);
+    protected Optional(Observable<T> observable) {
+        this.observable = observable;
     }
 
     public boolean isPresent() {
-        return !isEmpty().toBlocking().single();
+        return !this.observable.isEmpty().toBlocking().single();
     }
 
     public void ifPresent(Action1<? super T> action) {
-        subscribe(action);
+        this.observable.subscribe(action);
     }
 
     public T get() {
-        return toBlocking().single();
+        return this.observable.toBlocking().single();
     }
 
     public T orElse(T other) {
-        return defaultIfEmpty(other).toBlocking().single();
+        return this.observable.defaultIfEmpty(other).toBlocking().single();
     }
 
     public T orElseCall(Func0<? extends T> other) {
@@ -90,10 +67,10 @@ public class Optional<T> extends Observable<T> {
         return get();
     }
 
-    public Optional<T> filter(final Predicate<T> predicate) {
+    public Optional<T> filter(final Func1<? super T, Boolean> predicate) {
         Objects.requireNonNull(predicate);
 
-        return Optional.ofNullable(filter(new Func1<T, Boolean>() {
+        return Optional.ofNullable(this.observable.filter(new Func1<T, Boolean>() {
             @Override
             public Boolean call(T t) {
                 return predicate.call(t);
@@ -101,10 +78,10 @@ public class Optional<T> extends Observable<T> {
         }).toBlocking().singleOrDefault(null));
     }
 
-    public <U> Optional<U> map(final Function<? super T, ? extends U> mapper) {
+    public <U> Optional<U> map(final Func1<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
 
-        return Optional.ofNullable(map(new Func1<T, U>() {
+        return Optional.ofNullable(this.observable.map(new Func1<T, U>() {
             @Override
             public U call(T t) {
                 return mapper.call(t);
@@ -112,14 +89,16 @@ public class Optional<T> extends Observable<T> {
         }).toBlocking().singleOrDefault(null));
     }
 
-    public <U> Optional<U> flatMap(final Function<? super T, Optional<U>> mapper) {
+    public <U> Optional<U> flatMap(final Func1<? super T, Optional<U>> mapper) {
         Objects.requireNonNull(mapper);
 
-        return Optional.ofNullable(flatMap(new Func1<T, Optional<U>>() {
+        final Optional<U> optional = this.observable.flatMap(new Func1<T, Observable<Optional<U>>>() {
             @Override
-            public Optional<U> call(T t) {
-                return Objects.requireNonNull(mapper.call(t));
+            public Observable<Optional<U>> call(T t) {
+                return Observable.just(Objects.requireNonNull(mapper.call(t)));
             }
-        }).toBlocking().singleOrDefault(null));
+        }).toBlocking().singleOrDefault(Optional.<U>empty());
+
+        return optional;
     }
 }
