@@ -1,11 +1,14 @@
 package com.eccyan.optional;
 
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.internal.operators.OnSubscribeFromIterable;
 
 /**
@@ -33,15 +36,19 @@ public class Optional<T> extends Observable<T> {
             throw new NullPointerException();
         }
 
-        return new Optional<>(new OnSubscribeForSingleItem<>(data));
+        return new Optional<U>(new OnSubscribeForSingleItem<U>(data));
     }
 
     public static <U> Optional<U> ofNullable(U data) {
         if (data == null) {
-            return new Optional<>(new OnSubscribeFromIterable<>(Collections.<U>emptyList()));
+            return optionalEmpty();
         } else {
             return of(data);
         }
+    }
+
+    protected static <U> Optional<U> optionalEmpty() {
+        return new Optional<U>(new OnSubscribeFromIterable<U>(Collections.<U>emptyList()));
     }
 
     protected Optional(OnSubscribe<T> f) {
@@ -76,4 +83,30 @@ public class Optional<T> extends Observable<T> {
         return get();
     }
 
+    public Optional<T> filter(final Predicate<? super T> predicate) {
+        return Optional.ofNullable(filter(new Func1<T, Boolean>() {
+            @Override
+            public Boolean call(T t) {
+                return predicate.test(t);
+            }
+        }).toBlocking().singleOrDefault(null));
+    }
+
+    public <U> Optional<U> map(final Function<? super T,? extends U> mapper) {
+        return Optional.ofNullable(map(new Func1<T, U>() {
+            @Override
+            public U call(T t) {
+                return mapper.apply(t);
+            }
+        }).toBlocking().singleOrDefault(null));
+    }
+
+    public <U> Optional<U> flatMap(final Function<? super T,Optional<U>> mapper) {
+        return (Optional<U>)flatMap(new Func1<T, Optional<U>>() {
+            @Override
+            public Optional<U> call(T t) {
+                return mapper.apply(t);
+            }
+        }).single();
+    }
 }
