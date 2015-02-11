@@ -1,7 +1,10 @@
 def localProperty(name) {
-    Properties props = new Properties()
-    props.load(project.rootProject.file('local.properties')
-            .newDataInputStream())
+    final Properties props = new Properties()
+    final file = project.rootProject.file('local.properties')
+    if (file.exists()) {
+        props.load(file.newDataInputStream())
+    }
+
     return props.getProperty(name.toString())
 }
 
