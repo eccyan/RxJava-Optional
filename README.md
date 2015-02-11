@@ -25,9 +25,9 @@ dependencies {
 ## How to use
 
 ```java
-final Optional<String> lastName = Optional.ofNullable(expected.split(" ")[0]);
-final Optional<String> firstName = Optional.ofNullable(expected.split(" ")[1]);
-final Optional<String> actual =
+final Optional<String> lastName = Optional.ofNullable("Daisuke");
+final Optional<String> firstName = Optional.ofNullable("Sato");
+final Optional<String> fullname =
         lastName.flatMap(new Func1<String, Optional<String>>() {
             @Override
             public Optional<String> call(final String ln) {
@@ -41,8 +41,7 @@ final Optional<String> actual =
         });
 
 // With retrolambda
-Optional<String> fullName =
-        lastName.flatMap(ln ->
+fullName = lastName.flatMap(ln ->
                 firstName.map(fn ->
                         String.join(" ", ln, fn)));
 ```
