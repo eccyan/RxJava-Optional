@@ -1,5 +1,8 @@
 package com.eccyan.optional;
 
+
+import com.eccyan.utils.Strings;
+
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
@@ -143,5 +146,26 @@ public class OptionalTest {
                         return null;
                     }
                 });
+    }
+
+    @Test
+    public void returnsFullName() {
+        final String expected = "Daisuke Sato";
+        final Optional<String> lastName = Optional.ofNullable(expected.split(" ")[0]);
+        final Optional<String> firstName = Optional.ofNullable(expected.split(" ")[1]);
+        final Optional<String> actual =
+                lastName.flatMap(new Func1<String, Optional<String>>() {
+                    @Override
+                    public Optional<String> call(final String ln) {
+                        return firstName.map(new Func1<String, String>() {
+                            @Override
+                            public String call(final String fn) {
+                                return Strings.join(" ", ln, fn);
+                            }
+                        });
+                    }
+                });
+
+        assertThat(actual.get(), is(expected));
     }
 }

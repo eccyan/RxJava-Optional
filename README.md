@@ -5,11 +5,11 @@ RxJava-Optional
 
 RxJava-Optional is an library that allows developers to use Optional using RxJava
 
-# Install
+## Install
 
 Download [the latest JAR](https://search.maven.org/remote_content?g=com.eccyan&a=rxjava-optional&v=LATEST) or grab via Gradle:
 
-#### Gradle
+### Gradle
 ```groovy
 repositories {
     jcenter()
@@ -20,6 +20,31 @@ dependencies {
     //  compile 'io.reactivex:rxjava:1.0.5'
     compile 'com.eccyan:rxjava-optional:1.1.0'
 }
+```
+
+## How to use
+
+```java
+final Optional<String> lastName = Optional.ofNullable(expected.split(" ")[0]);
+final Optional<String> firstName = Optional.ofNullable(expected.split(" ")[1]);
+final Optional<String> actual =
+        lastName.flatMap(new Func1<String, Optional<String>>() {
+            @Override
+            public Optional<String> call(final String ln) {
+                return firstName.map(new Func1<String, String>() {
+                    @Override
+                    public String call(final String fn) {
+                        return String.join(" ", ln, fn);
+                    }
+                });
+            }
+        });
+
+// With retrolambda
+Optional<String> fullName =
+        lastName.flatMap(ln ->
+                firstName.map(fn ->
+                        String.join(" ", ln, fn)));
 ```
 
 Developed By
