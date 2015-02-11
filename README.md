@@ -25,25 +25,23 @@ dependencies {
 ## How to use
 
 ```java
-final Optional<String> lastName = Optional.ofNullable("Daisuke");
-final Optional<String> firstName = Optional.ofNullable("Sato");
-final Optional<String> fullname =
+Optional<String> lastName = Optional.ofNullable("Daisuke");
+Optional<String> firstName = Optional.ofNullable("Sato");
+Optional<String> fullname =
         lastName.flatMap(new Func1<String, Optional<String>>() {
             @Override
             public Optional<String> call(final String ln) {
                 return firstName.map(new Func1<String, String>() {
                     @Override
                     public String call(final String fn) {
-                        return String.join(" ", ln, fn);
+                        return Strings.join(" ", ln, fn);
                     }
                 });
             }
         });
 
 // With retrolambda
-fullName = lastName.flatMap(ln ->
-                firstName.map(fn ->
-                        String.join(" ", ln, fn)));
+fullName = lastName.flatMap(ln -> firstName.map(fn -> Strings.join(" ", ln, fn)));
 ```
 
 Developed By
