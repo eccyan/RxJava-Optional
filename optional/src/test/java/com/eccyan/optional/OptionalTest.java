@@ -7,12 +7,14 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Created by Daisuke Sato on 2/10/15.
@@ -40,6 +42,33 @@ public class OptionalTest {
     public void isPresent_returnsFalseWhenValuePresent() {
         final Optional<Integer> actual = Optional.ofNullable(null);
         assertFalse(actual.isPresent());
+    }
+
+    @Test
+    public void ifPresent_doNothingWhenEmpty() {
+        final Optional<Integer> actual = Optional.ofNullable(null);
+        actual.ifPresent(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                fail();
+            }
+        });
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void ifPresent_throwNullPointerExceptionWhenValuePresentAndActionIsNull() {
+        final Optional<Integer> actual = Optional.ofNullable(1);
+        actual.ifPresent(null);
+    }
+
+    @Test
+    public void ifPresent_notThrowWhenEmptyAndActionIsNull() {
+        try {
+            final Optional<Integer> actual = Optional.ofNullable(null);
+            actual.ifPresent(null);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     @Test

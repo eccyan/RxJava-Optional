@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.1.1
+-------------
+
+* Fixed ``ifPresent`` throws 'Sequence contains no elements' when empty
+
 Version 1.1.0
 -------------
 
@@ -9,8 +14,8 @@ Version 1.1.0
 Version 1.0.3
 -------------
 
-* Fixed isPresent result has inversed
-* Added filter/map/flatMap
+* Fixed ``isPresent`` result has inversed
+* Added ``filter``,``map``and``flatMap``
 
 Version 1.0.2
 -------------

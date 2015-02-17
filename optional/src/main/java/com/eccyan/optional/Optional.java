@@ -44,7 +44,10 @@ public class Optional<T> {
     }
 
     public void ifPresent(Action1<? super T> action) {
-        this.observable.subscribe(action);
+        if (isPresent()) {
+            Objects.requireNonNull(action);
+            this.observable.subscribe(action);
+        }
     }
 
     public T get() {
