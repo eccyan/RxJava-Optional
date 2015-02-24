@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.1.2
+-------------
+
+* Fixed for using old APIs.
+
 Version 1.1.1
 -------------
 
