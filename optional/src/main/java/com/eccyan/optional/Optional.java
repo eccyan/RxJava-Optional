@@ -1,7 +1,6 @@
 package com.eccyan.optional;
 
-import java.util.Collections;
-import java.util.Objects;
+import com.eccyan.optional.utils.Objects;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -32,7 +31,7 @@ public class Optional<T> {
     }
 
     public static <U> Optional<U> empty() {
-        return new Optional<U>(Observable.from(Collections.<U>emptyList()));
+        return new Optional<U>(Observable.<U>empty());
     }
 
     protected Optional(Observable<T> observable) {
