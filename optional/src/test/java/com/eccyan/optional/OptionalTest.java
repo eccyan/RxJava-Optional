@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
+import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -196,5 +197,25 @@ public class OptionalTest {
                 });
 
         assertThat(actual.get(), is(expected));
+    }
+
+    @Test
+    public void convertsToObservable() {
+        String expected = "Daisuke Sato";
+        Optional<String> objectUnderTest = Optional.of(expected);
+
+        Observable<String> resultObservable = objectUnderTest.toObservble();
+
+        String result = resultObservable.toBlocking().single();
+        assertTrue(result == expected);
+    }
+
+    @Test
+    public void convertsNullToEmptyObservable() {
+        Optional<String> objectUnderTest = Optional.ofNullable(null);
+
+        Observable<String> resultObservable = objectUnderTest.toObservble();
+
+        assertTrue(resultObservable.isEmpty().toBlocking().single());
     }
 }

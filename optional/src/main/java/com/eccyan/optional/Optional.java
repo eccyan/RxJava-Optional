@@ -103,4 +103,8 @@ public class Optional<T> {
 
         return optional;
     }
+
+    public Observable<T> toObservble(){
+        return observable;
+    }
 }
