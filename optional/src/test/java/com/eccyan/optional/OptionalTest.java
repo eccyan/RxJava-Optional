@@ -204,7 +204,7 @@ public class OptionalTest {
         String expected = "Daisuke Sato";
         Optional<String> objectUnderTest = Optional.of(expected);
 
-        Observable<String> resultObservable = objectUnderTest.toObservble();
+        Observable<String> resultObservable = objectUnderTest.toObservable();
 
         String result = resultObservable.toBlocking().single();
         assertTrue(result == expected);
@@ -214,7 +214,7 @@ public class OptionalTest {
     public void convertsNullToEmptyObservable() {
         Optional<String> objectUnderTest = Optional.ofNullable(null);
 
-        Observable<String> resultObservable = objectUnderTest.toObservble();
+        Observable<String> resultObservable = objectUnderTest.toObservable();
 
         assertTrue(resultObservable.isEmpty().toBlocking().single());
     }

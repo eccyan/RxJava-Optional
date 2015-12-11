@@ -104,7 +104,7 @@ public class Optional<T> {
         return optional;
     }
 
-    public Observable<T> toObservble(){
+    public Observable<T> toObservable(){
         return observable;
     }
 }
